@@ -11,9 +11,9 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="Cuentas de Flor">
 <link rel="manifest" href="manifest.webmanifest">
-<link rel="icon" href="icons/icon.svg" type="image/svg+xml">
-<link rel="icon" href="icons/icon-192.png" type="image/png" sizes="192x192">
-<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+<link rel="icon" href="icon.svg" type="image/svg+xml">
+<link rel="icon" href="icon-192.png" type="image/png" sizes="192x192">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,600;0,9..144,800;1,9..144,800&family=Nunito+Sans:wght@400;600;700;800&family=Kalam:wght@400;700&display=swap">
 <style>
@@ -405,7 +405,7 @@ function vHome(){
  </main>`;
  tick();paintWeather();
 }
-function tick(){const el=document.getElementById('clock');if(el)el.textContent=new Date().toLocaleTimeString('es-CL',{hour:'2-digit',minute:'2-digit'})}
+function tick(){const el=document.getElementById('clock');if(el)el.textContent=new Date().toLocaleTimeString('es-CL',{hour:'2-digit',minute:'2-digit',hour12:false})}
 setInterval(tick,15000);
 let WX=null,wxTried=false;
 const wxLabel=c=>c===0?'Despejado':c<=3?'Parcial nublado':c<=48?'Neblina':c<=67?'Lluvia':c<=77?'Nieve':c<=82?'Chubascos':'Tormenta';
@@ -596,6 +596,7 @@ function vAjustes(){
  app.innerHTML=`
  <header class="hero small shine">${stars()}<div class="top"><h1 style="font-size:32px">Ajustes</h1></div></header>
  <main class="wrap pad enter">
+  ${INSTALL?`<div class="card col" style="gap:10px;border:2px solid #F2B705"><div class="lbl">Instalar la app</div><div class="sub">Deja Las Cuentas de Flor como app en tu celular, con su ícono.</div><button class="btn btn-red shine" data-a="install">${ic('dl')}Instalar en el celular</button></div>`:''}
   <div class="card col" style="gap:10px"><label for="rut" class="lbl">Tu RUT</label><div class="sub">Se usa para Tricot, Entel y Salcobrand Pay, y se copia al tocar "Ir a pagar".</div><input id="rut" class="field" placeholder="12.345.678-9" value="${esc(S.rut)}" data-in="rut" autocomplete="off"></div>
   <div class="card col" style="gap:10px"><div class="lbl">Avisos de vencimiento</div><div class="sub">Oli te avisa en la app 3 días antes y el día del pago. También puede mandar un aviso al celular al abrir la app.</div>
    ${perm==='granted'?`<span class="pill p-ok" style="align-self:flex-start">${ic('check','width:16px;height:16px')}Avisos activados</span>`:perm==='denied'?'<div class="sub"><b>Los avisos están bloqueados.</b> Actívalos en la configuración del navegador.</div>':perm==='unsupported'?'<div class="sub">Este navegador no permite avisos; igual verás las alertas dentro de la app.</div>':`<button class="btn btn-vi" data-a="notif">${ic('bell')}Activar avisos</button>`}</div>
@@ -612,6 +613,9 @@ function vAjustes(){
 }
 
 /* ---------- eventos ---------- */
+let INSTALL=null;
+window.addEventListener('beforeinstallprompt',e=>{e.preventDefault();INSTALL=e;if(UI.view==='ajustes')vAjustes()});
+window.addEventListener('appinstalled',()=>{INSTALL=null;toast('¡App instalada!')});
 const A={
  go:el=>{if(el.dataset.tab)UI.tab=el.dataset.tab;if(el.dataset.v==='resumen')UI.resYm=curYm();go(el.dataset.v)},
  eye:()=>{S.hidden=!S.hidden;save();render()},
@@ -647,6 +651,7 @@ const A={
   if(!q){e.textContent='Escribe qué compraste.';return}if(!v){e.textContent='Escribe el valor de cada cuota.';return}if(!t||t>60){e.textContent='Escribe el número de cuotas (entre 1 y 60).';return}if(p>=t){e.textContent='Las cuotas pagadas deben ser menos que el total.';return}
   S.cuotas.push({id:uid('q'),tienda:UI.tab,que:q,valor:v,total:t,pagadasIni:p,regYm:curYm(),regDate:isoToday()});save();celebrate();toast('Compra guardada');vCuotas()},
  delcuota:el=>{if(!confirm('¿Borrar esta compra en cuotas?'))return;S.cuotas=S.cuotas.filter(c=>c.id!==el.dataset.id);save();vCuotas()},
+ install:async()=>{if(!INSTALL)return;INSTALL.prompt();try{await INSTALL.userChoice}catch(e){}INSTALL=null;vAjustes()},
  notif:async()=>{try{const r=await Notification.requestPermission();if(r==='granted'){toast('Avisos activados');notify(true)}}catch(e){toast('No se pudieron activar los avisos')}vAjustes()}
 };
 function copyCliente(a,quiet){const t=copiable(a);if(!t){toast('Agrega tu RUT en Ajustes');return}

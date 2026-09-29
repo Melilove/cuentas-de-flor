@@ -1,15 +1,15 @@
 /* Las Cuentas de Flor · versión 1.0 · creada para Flor por melitalove
    Cambia CACHE cada vez que subas una versión nueva para que el celular la actualice. */
-const CACHE = 'cuentas-flor-v1.0';
+const CACHE = 'cuentas-flor-v1.0.1';
 const SHELL = [
   './',
   './index.html',
   './manifest.webmanifest',
-  './icons/icon.svg',
-  './icons/icon-192.png',
-  './icons/icon-512.png',
-  './icons/icon-maskable-512.png',
-  './icons/apple-touch-icon.png'
+  './icon.svg',
+  './icon-192.png',
+  './icon-512.png',
+  './icon-maskable-512.png',
+  './apple-touch-icon.png'
 ];
 
 self.addEventListener('install', e => {

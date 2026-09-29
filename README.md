@@ -23,7 +23,7 @@ Creada para Flor por **melitalove** · Versión 1.0
 index.html              La app completa
 manifest.webmanifest    Nombre, colores e íconos para instalarla
 sw.js                   Permite usarla sin internet
-icons/                  Ícono de la app en todos los tamaños
+icon-*.png, icon.svg    Ícono de la app en todos los tamaños
 ```
 
 ## Publicar en GitHub Pages
